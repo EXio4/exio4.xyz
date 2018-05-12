@@ -6,9 +6,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>$title$</title>
-    <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/syntax.css" rel="stylesheet">
-    <link href="/css/carousel.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     $mathjax$
     <style>
@@ -22,14 +21,17 @@
     $partial("templates/nav.html")$
 
     <div class="container">
-      <h2>$title$</h2>
+      <h3>$title$</h3>
+      <div class="post-info">
+          [ $date$ ] tags: $tags$
+      </div>
       $body$
       $partial("templates/footer.html")$
     </div>
 
+
     </div><!-- /.container -->
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.js"></script>
-    <script src="/js/holder.js"></script>
   </body>
 </html>

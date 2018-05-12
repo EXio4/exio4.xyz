@@ -6,9 +6,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>$title$</title>
-    <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/syntax.css" rel="stylesheet">
-    <link href="/css/carousel.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <style>
         body { 
@@ -19,16 +18,15 @@
     </style>
   </head>
   <body>
-
     $partial("templates/nav.html")$
 
     <div class="container">
-    $body$
-    $partial("templates/footer.html")$
+        <h3>$title$</h3>
+        $body$
+        $partial("templates/footer.html")$
     </div>
 
     <script src="/js/jquery.js"></script>
     <script src="/js/bootstrap.js"></script>
-    <script src="/js/holder.js"></script>
   </body>
 </html>

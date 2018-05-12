@@ -1,10 +1,10 @@
-name:                hakyll-bootstrap
+name:                exio4xyz
 version:             0.1.0.0
 license:             MIT
 license-file:        LICENSE
 category:            Web
-author:              Stephen Diehl
-maintainer:          stephen.m.diehl@gmail.com
+author:              Exio4
+maintainer:          me@exio4.xyz
 build-type:          Simple
 cabal-version:       >=1.16
 
@@ -12,7 +12,9 @@ executable blog
   default-language:    Haskell2010
   main-is:             Main.hs
   build-depends:
-      base       >= 4.6 && <4.7
-    , containers >= 0.5 && <0.6
+      base
+    , containers
     , pandoc     >= 1.11
-    , hakyll     >= 4.3 && <4.4
+    , hakyll     >= 4.4
+    , yaml
+    , filepath

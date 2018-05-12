@@ -11,6 +11,8 @@
 
 module Main where
 
+import Data.List
+import System.FilePath.Posix
 import Hakyll
 import Text.Pandoc
 import Data.Monoid (mappend)
@@ -29,13 +31,13 @@ postCtx =
 mathCtx :: Context String
 mathCtx = field "mathjax" $ \item -> do
   metadata <- getMetadata $ itemIdentifier item
-  return $ if "mathjax" `M.member` metadata
-           then "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"
-           else ""
+  return $ case "mathjax" `lookupString` metadata of
+            Just "on" -> "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"
+            _ -> ""
 
 archiveCtx posts =
   listField "posts" postCtx (return posts)
-  `mappend` constField "title" "Archives"
+  `mappend` constField "title" "Blog"
   `mappend` defaultContext
 
 indexCtx posts =
@@ -43,16 +45,29 @@ indexCtx posts =
   `mappend` constField "title" "Home"
   `mappend` defaultContext
 
+postCtxWithTags :: Tags -> Context String
+postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
+  
+cleanIndexUrls :: Item String -> Compiler (Item String)
+cleanIndexUrls = return . fmap (withUrls cleanIndex)
+  where idx = "index.html"
+        cleanIndex url
+            | idx `isSuffixOf` url = take (length url - length idx) url
+            | otherwise            = url
+
 --------------------------------------------------------------------
 -- Rules
 --------------------------------------------------------------------
 
+cleanRoute :: Routes
+cleanRoute = customRoute createIndexRoute
+  where
+    createIndexRoute ident = takeDirectory p </> takeBaseName p </> "index.html"
+                            where p = toFilePath ident
+
 static :: Rules ()
 static = do
   match "fonts/*" $ do
-    route idRoute
-    compile $ copyFileCompiler
-  match "img/*" $ do
     route idRoute
     compile $ copyFileCompiler
   match "css/*" $ do
@@ -65,41 +80,51 @@ static = do
 pages :: Rules ()
 pages = do
   match "pages/*" $ do
-    route $ setExtension "html"
-    compile $ getResourceBody
-      >>= loadAndApplyTemplate "templates/page.html"    postCtx
+    route $ cleanRoute
+    compile $ compiler
+      >>= loadAndApplyTemplate "templates/page.html" postCtx
       >>= relativizeUrls
+      >>= cleanIndexUrls 
 
 posts :: Rules ()
 posts = do
+  tags <- buildTags "posts/*" (fromCapture "tags/*.html")
   match "posts/*" $ do
-    route $ setExtension "html"
+    route $ cleanRoute
     compile $ compiler
-      >>= loadAndApplyTemplate "templates/post.html"    postCtx
+      >>= loadAndApplyTemplate "templates/post.html" (postCtxWithTags tags)
       >>= relativizeUrls
+      >>= cleanIndexUrls 
+
+  tagsRules tags $ \tag pattern -> do
+    let title = "Posts tagged \"" ++ tag ++ "\""
+    route cleanRoute
+    compile $ do
+        posts <- recentFirst =<< loadAll pattern
+        let ctx = constField "title" title
+                  `mappend` listField "posts" postCtx (return posts)
+                  `mappend` defaultContext
+
+        makeItem ""
+            >>= loadAndApplyTemplate "templates/blog.html" ctx
+            >>= relativizeUrls
+            >>= cleanIndexUrls 
 
 archive :: Rules ()
 archive = do
-  create ["archive.html"] $ do
+  create ["index.html"] $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAll "posts/*"
       makeItem ""
-        >>= loadAndApplyTemplate "templates/archive.html" (archiveCtx posts)
+        >>= loadAndApplyTemplate "templates/blog.html" (archiveCtx posts)
         >>= relativizeUrls
-
-index :: Rules ()
-index = do
-  match "index.html" $ do
-    route idRoute
-    compile $ do
-      posts <- recentFirst =<< loadAll "posts/*"
-      getResourceBody
-        >>= applyAsTemplate (indexCtx posts)
-        >>= relativizeUrls
+        >>= cleanIndexUrls 
 
 templates :: Rules ()
 templates = match "templates/*" $ compile templateCompiler
+
+
 
 --------------------------------------------------------------------
 -- Configuration
@@ -120,5 +145,4 @@ main = hakyllWith cfg $ do
   pages
   posts
   archive
-  index
   templates
