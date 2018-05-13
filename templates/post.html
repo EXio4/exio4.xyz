@@ -1,30 +1,12 @@
-<!DOCTYPE HTML>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>$title$ - exio4.xyz</title>
-    <link href="/css/normalize.css" rel="stylesheet">
-    <link href="/css/sakura-dark-solarized.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    $mathjax$
-  </head>
-  <body>
-    $partial("templates/nav.html")$
 
-    <div class="container">
-      <h3>$title$</h3>
-      <div class="post-info">
-          [ $date$ ] tags: $tags$
-      </div>
-      $body$
-      $partial("templates/footer.html")$
-    </div>
+$partial("templates/nav.html")$
 
+<div>
+  <h3>$title$</h3>
+  <div class="post-info">
+      [ $date$ ] tags: $tags$
+  </div>
+  $body$
+</div>
 
-    </div>
-  </body>
-</html>
+$partial("templates/footer.html")$
