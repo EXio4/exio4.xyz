@@ -124,8 +124,11 @@ archive = do
 templates :: Rules ()
 templates = match "templates/*" $ compile templateCompiler
 
-
-
+favicon :: Rules ()
+favicon = do
+  match "favicon.ico" $ do
+    route idRoute
+    compile $ copyFileCompiler
 --------------------------------------------------------------------
 -- Configuration
 --------------------------------------------------------------------
@@ -141,6 +144,7 @@ cfg = defaultConfiguration
 
 main :: IO ()
 main = hakyllWith cfg $ do
+  favicon
   static
   pages
   posts
