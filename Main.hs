@@ -14,9 +14,12 @@ module Main where
 import Data.List
 import System.FilePath.Posix
 import Hakyll
+import Hakyll.Web.Pandoc
 import Text.Pandoc
 import Data.Monoid (mappend)
 import qualified Data.Map as M
+import qualified Data.Set as S
+import           Text.Pandoc.Options
 
 --------------------------------------------------------------------
 -- Contexts
@@ -47,7 +50,11 @@ indexCtx posts =
 
 postCtxWithTags :: Tags -> Context String
 postCtxWithTags tags = tagsField "tags" tags `mappend` postCtx
-  
+
+--------------------------------------------------------------------
+-- Compilers
+--------------------------------------------------------------------
+
 cleanIndexUrls :: Item String -> Compiler (Item String)
 cleanIndexUrls = return . fmap (withUrls cleanIndex)
   where idx = "index.html"
@@ -134,10 +141,14 @@ favicon = do
 --------------------------------------------------------------------
 
 compiler :: Compiler (Item String)
-compiler = pandocCompilerWith defaultHakyllReaderOptions pandocOptions
+compiler = pandocCompilerWith pandocROptions pandocWOptions
 
-pandocOptions :: WriterOptions
-pandocOptions = defaultHakyllWriterOptions{ writerHTMLMathMethod = MathJax "" }
+pandocROptions :: ReaderOptions
+pandocROptions = defaultHakyllReaderOptions { readerExtensions = exts }
+    where exts = foldl' (flip enableExtension) (readerExtensions defaultHakyllReaderOptions) [Ext_pipe_tables, Ext_backtick_code_blocks]
+
+pandocWOptions :: WriterOptions
+pandocWOptions = defaultHakyllWriterOptions{ writerHTMLMathMethod = MathJax "" }
 
 cfg :: Configuration
 cfg = defaultConfiguration

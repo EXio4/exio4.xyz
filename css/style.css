@@ -19,8 +19,8 @@ a {
   color: inherit;
 }
 
-.link {
- color: #4070a0; 
+:link, :visited {
+ color: #4070d0; 
 }
 
 #nav {
