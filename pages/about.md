@@ -20,6 +20,6 @@ My biggest hobbies are all related to programming in one way to another, so it s
 
 | contact details                       |
 |--------|------------------------------|
-| github |  https://github.com/EXio4    |
+| github | <https://github.com/EXio4>   |
 | email  |  me **at** exio4 **dot** xyz |
 
