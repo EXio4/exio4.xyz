@@ -11,15 +11,16 @@
 
 module Main where
 
-import Data.List
-import System.FilePath.Posix
-import Hakyll
-import Hakyll.Web.Pandoc
-import Text.Pandoc
-import Data.Monoid (mappend)
+import           Data.List
+import           System.FilePath.Posix
+import           Hakyll
+import           Hakyll.Web.Pandoc
+import           Text.Pandoc
+import           Data.Monoid (mappend)
 import qualified Data.Map as M
 import qualified Data.Set as S
 import           Text.Pandoc.Options
+import           Control.Applicative           (Alternative (..))
 
 --------------------------------------------------------------------
 -- Contexts
@@ -29,6 +30,7 @@ postCtx :: Context String
 postCtx =
   dateField "date" "%B %e, %Y"
   `mappend` mathCtx
+  `mappend` headerCtx
   `mappend` defaultContext
 
 mathCtx :: Context String
@@ -38,14 +40,24 @@ mathCtx = field "mathjax" $ \item -> do
             Just "on" -> "<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"
             _ -> ""
 
+headerCtx :: Context String
+headerCtx = field "no_header" $ \item -> do
+  metadata <- getMetadata $ itemIdentifier item
+  case "header" `lookupString` metadata of
+            Just "disable" -> return (error "boolean cannot be shown")
+            _ -> empty
+
+
 archiveCtx posts =
   listField "posts" postCtx (return posts)
   `mappend` constField "title" "Blog"
+  `mappend` headerCtx
   `mappend` defaultContext
 
 indexCtx posts =
   listField "posts" postCtx (return posts)
   `mappend` constField "title" "Home"
+  `mappend` headerCtx
   `mappend` defaultContext
 
 postCtxWithTags :: Tags -> Context String
@@ -110,6 +122,7 @@ posts = do
         posts <- recentFirst =<< loadAll pattern
         let ctx = constField "title" title
                   `mappend` listField "posts" postCtx (return posts)
+                  `mappend` headerCtx
                   `mappend` defaultContext
 
         makeItem ""

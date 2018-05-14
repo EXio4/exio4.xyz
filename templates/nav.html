@@ -13,9 +13,11 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    
+    $if(no_header)$
+    $else$
     <h2>Exio's weird ideas</h2>
     <ul id="nav">
       <li><a href="/">Blog</a></li>
       <li><a href="/pages/about">About me</a></li>
     </ul>
+    $endif$

@@ -18,6 +18,8 @@ I'm mostly starting this blog to have a place to rant about weird things, or to 
 
 My biggest hobbies are all related to programming in one way to another, so it shouldn't be surprising to see programming in most, if not all, the things I post here, I guess :)
 
+You can find my resume [here](/pages/resume/)
+
 | contact details                       |
 |--------|------------------------------|
 | github | <https://github.com/EXio4>   |
